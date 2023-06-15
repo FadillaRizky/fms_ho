@@ -4,8 +4,10 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:fms_ho/screen/filter_date.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../api/GetAllSpkListResponse.dart';
@@ -28,9 +30,11 @@ class Maintenance extends StatefulWidget {
 class _MaintenanceState extends State<Maintenance> {
   TextEditingController spkNumberController = TextEditingController();
   TextEditingController nopolController = TextEditingController();
+  TextEditingController filterDateController = TextEditingController();
   RefreshController refreshC = RefreshController();
 
   List<Data> result = [];
+  List? fixdate = [];
 
   // num? totalSpk;
   int? idNopol;
@@ -38,6 +42,8 @@ class _MaintenanceState extends State<Maintenance> {
   String? spkNumber;
   String? nopol;
   String? status;
+  String? startDate;
+  String? endDate;
   num? totalPages;
 
   bool loading = true;
@@ -46,6 +52,7 @@ class _MaintenanceState extends State<Maintenance> {
   bool isNopol = false;
   bool isStatus = false;
   bool isClear = false;
+  bool isDate = false;
 
   void loadData() async {
     // await Api.getAllSpkList(
@@ -66,7 +73,7 @@ class _MaintenanceState extends State<Maintenance> {
       } else {
         currentPage++;
         await Api.getAllSpkList(
-                currentPage, spkNumber ?? "", nopol ?? "", status ?? "")
+                currentPage, spkNumber ?? "", nopol ?? "", status ?? "",startDate ?? "",endDate ?? "")
             .then((value) {
           result.addAll(value.data!);
           setState(() {});
@@ -97,12 +104,13 @@ class _MaintenanceState extends State<Maintenance> {
       loading = true;
     });
     Api.getAllSpkList(currentPage, spkNumberController.text ?? "",
-            nopolController.text ?? "", status ?? "")
+            nopolController.text ?? "", status ?? "",startDate ?? "",endDate ?? "")
         .then((value) {
       print(value.totalSpk);
       if (value.totalSpk! == 0) {
         loading = false;
         result = [];
+        totalPages = value.totalSpk;
       }
       if (value.totalSpk! > 0) {
         loading = false;
@@ -166,7 +174,7 @@ class _MaintenanceState extends State<Maintenance> {
                         Text(
                           " SPK List",
                           style: TextStyle(
-                              fontSize: 25,
+                              fontSize: 55.sp,
                               fontWeight: FontWeight.bold,
                               color: Colors.blue),
                         ),
@@ -176,13 +184,14 @@ class _MaintenanceState extends State<Maintenance> {
                         Text(
                           " Total Spk : ${totalPages ?? "-"} ",
                           style: TextStyle(
-                              fontSize: 60.sp,
+                              fontSize: 50.sp,
                               fontWeight: FontWeight.bold,
                               color: Colors.black87),
                         ),
                         SizedBox(
                           height: 30.h,
                         ),
+                        /// Filter Bar
                         GestureDetector(
                           onTap: () {
                             showDialog(
@@ -208,7 +217,7 @@ class _MaintenanceState extends State<Maintenance> {
                                           Text(
                                             "Filter",
                                             style: TextStyle(
-                                                fontSize: 70.sp,
+                                                fontSize: 60.sp,
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.black54),
                                           ),
@@ -229,7 +238,16 @@ class _MaintenanceState extends State<Maintenance> {
                                               controller: spkNumberController,
                                               // initialValue: spkNumber ?? "Nomorspk",
                                               decoration: InputDecoration(
-                                                  hintText: "Nomor SPK",
+                                                  hintText:
+                                                      "SPK/YYYY/MM/DD/XXX",
+                                                  hintStyle:
+                                                      Constants.hintStyle,
+                                                  labelText: "Nomor SPK",
+                                                  labelStyle:
+                                                      Constants.labelstyle,
+                                                  floatingLabelBehavior:
+                                                      FloatingLabelBehavior
+                                                          .always,
                                                   contentPadding:
                                                       EdgeInsets.fromLTRB(
                                                           10, 3, 1, 3),
@@ -244,7 +262,7 @@ class _MaintenanceState extends State<Maintenance> {
                                             ),
                                           ),
                                           SizedBox(
-                                            height: 5,
+                                            height: 10,
                                           ),
                                           Container(
                                             margin: EdgeInsets.symmetric(
@@ -263,7 +281,15 @@ class _MaintenanceState extends State<Maintenance> {
                                                   contentPadding:
                                                       EdgeInsets.fromLTRB(
                                                           10, 3, 1, 3),
-                                                  hintText: "Nopol",
+                                                  hintText: "X 1234 XX",
+                                                  hintStyle:
+                                                      Constants.hintStyle,
+                                                  labelText: "Nopol",
+                                                  labelStyle:
+                                                      Constants.labelstyle,
+                                                  floatingLabelBehavior:
+                                                      FloatingLabelBehavior
+                                                          .always,
                                                   border: OutlineInputBorder(
                                                     borderSide: BorderSide(
                                                         width: 1,
@@ -275,7 +301,170 @@ class _MaintenanceState extends State<Maintenance> {
                                             ),
                                           ),
                                           SizedBox(
-                                            height: 5,
+                                            height: 10,
+                                          ),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              showModalBottomSheet(
+                                                backgroundColor: Colors.transparent,
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius: BorderRadius.vertical(
+                                                        top: Radius.circular(20.0),
+                                                      ),
+                                                    ),
+                                                    padding: EdgeInsets.all(16.0),
+                                                    child: Column(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: <Widget>[
+                                                        GestureDetector(
+                                                          onTap: (){
+                                                            String formatnow =
+                                                            DateFormat('yyyy-MM-dd').format(DateTime.now());
+                                                            List finalDate = [formatnow,formatnow];
+                                                            Navigator.of(context).pop(finalDate);
+                                                          },
+                                                          child: Text(
+                                                            'Hari Ini',
+                                                            style: TextStyle(fontSize: 18.0),
+                                                          ),
+                                                        ),
+                                                        Divider(),
+                                                        GestureDetector(
+                                                          onTap: (){
+                                                            String formatnow =
+                                                            DateFormat('yyyy-MM-dd').format(DateTime.now());
+                                                            String formatYesterday = DateFormat('yyyy-MM-dd')
+                                                                .format(DateTime.now().subtract(Duration(days: 1)));
+                                                            List finalDate = [formatYesterday,formatnow];
+                                                            Navigator.of(context).pop(finalDate);
+                                                          },
+                                                          child: Text(
+                                                            'Kemarin',
+                                                            style: TextStyle(fontSize: 18.0),
+                                                          ),
+                                                        ),
+                                                        Divider(),
+                                                        GestureDetector(
+                                                          onTap: (){
+                                                            String formatnow =
+                                                            DateFormat('yyyy-MM-dd').format(DateTime.now());
+                                                            String formatOneWeek = DateFormat('yyyy-MM-dd')
+                                                                .format(DateTime.now().subtract(Duration(days: 7)));
+                                                            List finalDate = [formatOneWeek,formatnow];
+                                                            Navigator.of(context).pop(finalDate);
+                                                          },
+                                                          child: Text(
+                                                            'Minggu Ini',
+                                                            style: TextStyle(fontSize: 18.0),
+                                                          ),
+                                                        ),
+                                                        Divider(),
+                                                        GestureDetector(
+                                                          onTap: (){
+                                                            String formatnow =
+                                                            DateFormat('yyyy-MM-dd').format(DateTime.now());
+                                                            String formatOneMonth = DateFormat('yyyy-MM-dd')
+                                                                .format(DateTime.now().subtract(Duration(days: 30)));
+                                                            List finalDate = [formatOneMonth,formatnow];
+                                                            Navigator.of(context).pop(finalDate);
+                                                          },
+                                                          child: Text(
+                                                            'Bulan Ini',
+                                                            style: TextStyle(fontSize: 18.0),
+                                                          ),
+                                                        ),
+                                                        Divider(),
+                                                        GestureDetector(
+                                                          onTap: () async {
+                                                             try{
+                                                               List finalDate = await Navigator.push(
+                                                                 context,
+                                                                 MaterialPageRoute(
+                                                                   builder: (context) => FilterDate(),
+                                                                 ),
+                                                               );
+                                                               if (finalDate != []) {
+                                                                 Navigator.of(context).pop(finalDate);
+                                                               }
+                                                             }catch(e){
+                                                               print(e);
+                                                             }
+
+
+
+                                                          },
+                                                          child: Text(
+                                                            'Pilih Tanggal Sendiri',
+                                                            style: TextStyle(fontSize: 18.0),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              ).then((value) {
+                                                if (value != null) {
+                                                  startDate = value[0];
+                                                  endDate = value[1];
+                                                  filterDateController.text = "${value[0]} - ${value[1]}";
+                                                  print(' ${value[0]} - ${value[1]}');
+                                                }
+                                              });
+                                            },
+                                            child: Container(
+                                              margin: EdgeInsets.symmetric(
+                                                      vertical: 5)
+                                                  .r,
+                                              width: width,
+                                              height: 100.h,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: TextFormField(
+                                                controller:
+                                                    filterDateController,
+                                                enabled: false,
+                                                decoration: InputDecoration(
+                                                    contentPadding:
+                                                        EdgeInsets.fromLTRB(
+                                                            10, 3, 1, 3),
+                                                    hintText:
+                                                        "Silahkan Pilih Tanggal",
+                                                    hintStyle:
+                                                        Constants.hintStyle,
+                                                    labelText: "Tanggal",
+                                                    labelStyle:
+                                                        Constants.labelstyle,
+                                                    floatingLabelBehavior:
+                                                        FloatingLabelBehavior
+                                                            .always,
+                                                    suffixIcon: Icon(
+                                                        Icons.calendar_month),
+                                                    // border: OutlineInputBorder(
+                                                    //   borderSide: BorderSide(
+                                                    //       width: 1,
+                                                    //       style:
+                                                    //       BorderStyle.none),
+                                                    // ),
+                                                    disabledBorder:
+                                                        OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                          width: 1,
+                                                          style: BorderStyle
+                                                              .solid),
+                                                    ),
+                                                    filled: true,
+                                                    fillColor: Colors.white),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 10,
                                           ),
                                           DropdownSearch<String>(
                                             items: [
@@ -320,6 +509,10 @@ class _MaintenanceState extends State<Maintenance> {
                                             children: [
                                               TextButton(
                                                 onPressed: () {
+                                                  spkNumberController.clear();
+                                                  nopolController.clear();
+                                                  filterDateController.clear();
+                                                  status = null;
                                                   Navigator.of(context).pop();
                                                 },
                                                 child: Text("Batal"),
@@ -348,6 +541,12 @@ class _MaintenanceState extends State<Maintenance> {
                                                     isClear = true;
                                                   } else {
                                                     isStatus = false;
+                                                  }
+                                                  if (filterDateController.text != "") {
+                                                    isDate = true;
+                                                    isClear = true;
+                                                  } else {
+                                                    isDate = false;
                                                   }
                                                   Navigator.pop(context);
                                                   initSpklist();
@@ -380,12 +579,12 @@ class _MaintenanceState extends State<Maintenance> {
                                   Text(
                                     "Filter",
                                     style: TextStyle(
-                                        fontSize: 20, color: Colors.black54),
+                                        fontSize: 55.sp, color: Colors.black54),
                                   ),
                                   Icon(
                                     Icons.filter_alt_sharp,
                                     color: Colors.blue,
-                                    size: 25,
+                                    size: 23,
                                   )
                                 ],
                               ),
@@ -395,6 +594,7 @@ class _MaintenanceState extends State<Maintenance> {
                         SizedBox(
                           height: 10.h,
                         ),
+                        /// Indicator Filter
                         Row(
                           children: [
                             Expanded(
@@ -494,6 +694,35 @@ class _MaintenanceState extends State<Maintenance> {
                                           ),
                                         ),
                                       ),
+                                      Visibility(
+                                        visible: isDate,
+                                        child: FittedBox(
+                                          child: Card(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(10))),
+                                            elevation: 2,
+                                            child: Center(
+                                              child: Padding(
+                                                padding:
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                    vertical: 5),
+                                                child: Row(
+                                                  children: [
+                                                    Text("Tanggal"),
+                                                    SizedBox(
+                                                      width: 50.w,
+                                                    ),
+                                                    Icon(Icons.check_box,
+                                                        color: Colors.blue)
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -508,6 +737,9 @@ class _MaintenanceState extends State<Maintenance> {
                                         // spkNumber
                                         spkNumberController.clear();
                                         nopolController.clear();
+                                        filterDateController.clear();
+                                        startDate = null;
+                                        endDate = null;
                                         status = null;
                                         isClear = false;
                                         isSpkNumber = false;
@@ -519,65 +751,6 @@ class _MaintenanceState extends State<Maintenance> {
                             )
                           ],
                         ),
-                        // SizedBox(
-                        //   width: width,
-                        //   height: 113.h,
-                        //   child: DropdownSearch<Nopol>(
-                        //     dropdownDecoratorProps: DropDownDecoratorProps(
-                        //       dropdownSearchDecoration: InputDecoration(
-                        //         border: OutlineInputBorder(
-                        //           borderSide: BorderSide.none,
-                        //           borderRadius: BorderRadius.circular(10),
-                        //         ),
-                        //         contentPadding:
-                        //         EdgeInsets.only(left: 45, top: 15),
-                        //         filled: true,
-                        //         fillColor: Color.fromARGB(225, 239, 239, 239),
-                        //       ),
-                        //     ),
-                        //     popupProps: PopupPropsMultiSelection.bottomSheet(
-                        //       showSearchBox: true,
-                        //       itemBuilder: (context, item, isSelected) =>
-                        //           ListTile(
-                        //             title: Text(item.policeNumber),
-                        //           ),
-                        //     ),
-                        //     dropdownBuilder: (context, selectedItem) => Text(
-                        //       selectedItem?.policeNumber ?? "Nomor Polisi",
-                        //       style: Constants.textbutton2,
-                        //     ),
-                        //     onChanged: (value) {
-                        //       idNopol = value?.vehicleId;
-                        //     },
-                        //     asyncItems: (text) async {
-                        //       var datatoken = await LoginPref.getPref();
-                        //       var token = datatoken.token!;
-                        //       var response = await http.get(
-                        //         Uri.parse(
-                        //             "http://fms-api.ganekodev.com/api/resource/list-police-number"),
-                        //         headers: {
-                        //           'Content-type': 'application/json',
-                        //           'Authorization': 'Bearer $token',
-                        //         },
-                        //       );
-                        //       if (response.statusCode != 200) {
-                        //         return [];
-                        //       }
-                        //       if (response.statusCode == 200) {
-                        //         List allNopol = (json.decode(response.body)
-                        //         as Map<String, dynamic>)["data"];
-                        //         List<Nopol> allModelNopol = [];
-                        //         allNopol.forEach((element) {
-                        //           allModelNopol.add(Nopol(
-                        //               vehicleId: element["vehicle_id"],
-                        //               policeNumber: element["police_number"]));
-                        //         });
-                        //         return allModelNopol;
-                        //       }
-                        //       return [];
-                        //     },
-                        //   ),
-                        // ),
                         SizedBox(
                           height: 30.h,
                         ),

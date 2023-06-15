@@ -408,7 +408,7 @@ class _LoginState extends State<Login> {
                     ),
                     Container(
                       width: double.infinity,
-                      height: height / 18,
+                      height: 110.h,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(colors: [
                           Color.fromARGB(225, 0, 111, 186),

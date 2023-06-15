@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Constants {
-  static TextStyle textbutton1 = TextStyle(fontSize: 50.sp);
+  static TextStyle textbutton1 = TextStyle(fontSize: 45.sp);
   static TextStyle textbutton2 = TextStyle(
       color: Colors.blueAccent,
       fontSize: 50.sp,
@@ -17,7 +17,11 @@ class Constants {
   );
   static TextStyle subtitle1 = GoogleFonts.roboto(fontSize:35.sp, color: Colors.blueAccent);
   static TextStyle subtitle2 = TextStyle(fontSize: 47.sp);
-  static TextStyle subtitle3 = TextStyle(fontSize: 40.sp);
+  static TextStyle subtitle3 = TextStyle(
+    fontSize: 40.sp,
+    fontWeight: FontWeight.w500,
+    color: Colors.black,
+  );
   static TextStyle headline1 = GoogleFonts.roboto(
       fontSize: 76.sp, color: Colors.blueAccent, fontWeight: FontWeight.w500);
   static TextStyle headline2 = TextStyle(
@@ -31,9 +35,11 @@ class Constants {
   static TextStyle hintStyle = TextStyle(color: Colors.black26,fontSize: 40.sp);
   static TextStyle labelstyle = TextStyle(
       color: Colors.black,
-      fontSize: 50.sp);
-  static TextStyle titleSpkList = GoogleFonts.roboto(
-      fontSize: 35.sp, color: Colors.black87, fontWeight: FontWeight.w700);
+      fontSize: 40.sp);
+  static TextStyle title = TextStyle(
+      fontSize: 45.sp, color: Colors.black38, fontWeight: FontWeight.w700);
+  static TextStyle subtitleListTile = TextStyle(
+      fontSize: 45.sp, color: Colors.black38, fontWeight: FontWeight.w700);
   static TextStyle supportBy = GoogleFonts.roboto(
       fontSize: 18, color: Color.fromARGB(1000, 0, 111, 186));
 

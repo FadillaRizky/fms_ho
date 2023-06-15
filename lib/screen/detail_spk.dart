@@ -220,12 +220,14 @@ class _DetailSpkState extends State<DetailSpk> {
             child: DropdownSearch<String>(
               popupProps: PopupPropsMultiSelection.menu(),
               dropdownDecoratorProps: DropDownDecoratorProps(
+                baseStyle: Constants.labelstyle,
                 dropdownSearchDecoration: InputDecoration(
                     contentPadding: EdgeInsets.fromLTRB(15, 3, 5, 3),
                     border: OutlineInputBorder(),
                     labelText: "Jenis Kerusakan",
                     labelStyle: Constants.labelstyle),
               ),
+
               selectedItem: data.spkDetail!.serviceType ?? "-",
               enabled: false,
             ),
@@ -246,7 +248,7 @@ class _DetailSpkState extends State<DetailSpk> {
                     Text(
                       "Foto Lampiran  :",
                       style: TextStyle(
-                        fontSize: 50.sp,
+                        fontSize: 40.sp,
                         color: Colors.black,
                       ),
                     ),
@@ -432,6 +434,7 @@ class _DetailSpkState extends State<DetailSpk> {
             height: 30.h,
           ),
           TextField(
+            style: Constants.labelstyle,
             keyboardType: TextInputType.number,
             controller: TextEditingController(
                 text: data.spkDetail!.km.toString() ?? "-"),
@@ -439,7 +442,7 @@ class _DetailSpkState extends State<DetailSpk> {
             decoration: InputDecoration(
               suffixText: "KM",
               suffixStyle: TextStyle(
-                  fontSize: 65.sp,
+                  fontSize: 50.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.black38),
               labelText: "Kilometer Kendaraan",
@@ -455,6 +458,7 @@ class _DetailSpkState extends State<DetailSpk> {
             height: 30.h,
           ),
           TextField(
+            style: Constants.labelstyle,
             maxLines: 5,
             controller:
                 TextEditingController(text: data.spkDetail!.problemDetail),
@@ -462,6 +466,7 @@ class _DetailSpkState extends State<DetailSpk> {
             decoration: InputDecoration(
               labelText: "Detail Kerusakan",
               labelStyle: Constants.labelstyle,
+
               floatingLabelBehavior: FloatingLabelBehavior.always,
               contentPadding: EdgeInsets.fromLTRB(8, 20, 5, 3),
               border: OutlineInputBorder(
@@ -473,6 +478,7 @@ class _DetailSpkState extends State<DetailSpk> {
             height: 30.h,
           ),
           TextField(
+            style: Constants.labelstyle,
             controller:
                 TextEditingController(text: data.spkDetail!.location ?? "-"),
             decoration: InputDecoration(
@@ -501,7 +507,7 @@ class _DetailSpkState extends State<DetailSpk> {
                 Text(
                   "Biaya Perbaikan :",
                   style: TextStyle(
-                    fontSize: 50.sp,
+                    fontSize: 40.sp,
                     fontWeight: FontWeight.w500,
                     color: Colors.black,
                   ),
@@ -513,10 +519,7 @@ class _DetailSpkState extends State<DetailSpk> {
                 /// FIELD JASA
                 Text(
                   "1. Jasa :",
-                  style: TextStyle(
-                    fontSize: 50.sp,
-                    color: Colors.black,
-                  ),
+                  style: Constants.subtitle3
                 ),
                 SizedBox(
                   height: 10.h,
@@ -533,17 +536,17 @@ class _DetailSpkState extends State<DetailSpk> {
                               width: 600.w,
                               child: Text(
                                 "${data.additionalCost![i].additionalType!}",
-                                style: TextStyle(fontSize: 45.sp),
+                                style: TextStyle(fontSize: 35.sp),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               )),
-                          Text(" :  ", style: TextStyle(fontSize: 45.sp)),
+                          Text(" :  ", style: TextStyle(fontSize: 35.sp)),
                           Expanded(
                             child: Text(
                               (data.additionalCost![i].additionalCost != null)
                                   ? "${Currency.rupiah.format(data.additionalCost![i].additionalCost)}"
                                   : "null",
-                              style: TextStyle(fontSize: 47.sp),
+                              style: TextStyle(fontSize: 35.sp),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                             ),
@@ -562,10 +565,7 @@ class _DetailSpkState extends State<DetailSpk> {
                 /// FIELD SPAREPART
                 Text(
                   "2. Sparepart :",
-                  style: TextStyle(
-                    fontSize: 50.sp,
-                    color: Colors.black,
-                  ),
+                  style: Constants.subtitle3
                 ),
                 SizedBox(
                   height: 10.h,
@@ -582,17 +582,17 @@ class _DetailSpkState extends State<DetailSpk> {
                               width: 600.w,
                               child: Text(
                                 "${data.sparepartList![i].sparepartName!}",
-                                style: TextStyle(fontSize: 45.sp),
+                                style: TextStyle(fontSize: 35.sp),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               )),
-                          Text(" :  ", style: TextStyle(fontSize: 45.sp)),
+                          Text(" :  ", style: TextStyle(fontSize: 35.sp)),
                           Expanded(
                             child: Text(
                               (data.sparepartList![i].totalPrice != null)
                                   ? "${Currency.rupiah.format(data.sparepartList![i].totalPrice)}"
                                   : "null",
-                              style: TextStyle(fontSize: 47.sp),
+                              style: TextStyle(fontSize: 35.sp),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                             ),
@@ -611,10 +611,7 @@ class _DetailSpkState extends State<DetailSpk> {
                 /// FIELD SUBCON
                 Text(
                   "3. Subcon :",
-                  style: TextStyle(
-                    fontSize: 50.sp,
-                    color: Colors.black,
-                  ),
+                  style: Constants.subtitle3
                 ),
                 SizedBox(
                   height: 10.h,
@@ -631,17 +628,17 @@ class _DetailSpkState extends State<DetailSpk> {
                               width: 600.w,
                               child: Text(
                                 "${data.subcon![i].subconDescription!}",
-                                style: TextStyle(fontSize: 45.sp),
+                                style: TextStyle(fontSize: 35.sp),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               )),
-                          Text(" :  ", style: TextStyle(fontSize: 45.sp)),
+                          Text(" :  ", style: TextStyle(fontSize: 35.sp)),
                           Expanded(
                             child: Text(
                               (data.subcon![i].subconCost != null)
                                   ? "${Currency.rupiah.format(data.subcon![i].subconCost)}"
                                   : "null",
-                              style: TextStyle(fontSize: 47.sp),
+                              style: TextStyle(fontSize: 35.sp),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                             ),
@@ -656,6 +653,7 @@ class _DetailSpkState extends State<DetailSpk> {
                 SizedBox(
                   height: 20.h,
                 ),
+                Divider(),
                 Row(
                   children: [
                     SizedBox(
@@ -665,15 +663,15 @@ class _DetailSpkState extends State<DetailSpk> {
                         width: 600.w,
                         child: Text(
                           "TOTAL",
-                          style: TextStyle(fontSize: 50.sp),
+                          style: TextStyle(fontSize: 35.sp),
                         )),
-                    Text(" :  ", style: TextStyle(fontSize: 45.sp)),
+                    Text(" :  ", style: TextStyle(fontSize: 35.sp)),
                     Expanded(
                       child: Text(
                         (data.spkDetail!.totalAmount != null)
                             ? "${Currency.rupiah.format(data.spkDetail!.totalAmount)}"
                             : "Rp.0",
-                        style: TextStyle(fontSize: 47.sp),
+                        style: TextStyle(fontSize: 35.sp),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
@@ -848,7 +846,7 @@ class _DetailSpkState extends State<DetailSpk> {
               },
               child: Text(
                 "Kembali",
-                style: Constants.textbutton4,
+                style: Constants.textbutton1,
               ),
             ),
           ),

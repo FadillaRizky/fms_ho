@@ -43,12 +43,12 @@ class Api {
      print(e);
    }
   }
-  static Future<GetAllSpkListResponse> getAllSpkList(int currentPage,spkNumber,nopol,status) async {
+  static Future<GetAllSpkListResponse> getAllSpkList(int currentPage,spkNumber,nopol,status,String start,end) async {
     var datatoken = await LoginPref.getPref();
     var token = datatoken.token!;
 
     var url =
-        "$BASE_URL/maintenance/spks/all?page=$currentPage&spk_number=$spkNumber&nopol=$nopol&status=$status";
+        "$BASE_URL/maintenance/spks/all?page=$currentPage&spk_number=$spkNumber&nopol=$nopol&status=$status&start=$start&end=$end";
     var response = await http.get(
       Uri.parse(url),
       headers: {
